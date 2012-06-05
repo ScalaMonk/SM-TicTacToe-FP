@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main/scala"/>
+	<classpathentry kind="src" path="src/test/scala"/>
+	<classpathentry kind="con" path="org.scala-ide.sdt.launching.SCALA_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/ohj.jar"/>
+	<classpathentry kind="lib" path="lib/jewt.jar"/>
+	<classpathentry kind="lib" path="lib/share.jar"/>
+	<classpathentry kind="lib" path="lib/help-share.jar"/>
+	<classpathentry kind="lib" path="lib/oracle_ice.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

@@ -5,6 +5,7 @@ import java.net.URL
 import oracle.help.CSHManager
 import oracle.help.Help
 import oracle.help.library.helpset.HelpSet
+import oracle.help.htmlBrowser.ICEBrowser
 
 // Find the HelpSet file and create the HelpSet object:
 
@@ -14,6 +15,9 @@ object OXO_ViewHelp {
 
   val _help = new Help(true, true)
   val _contextManager = new CSHManager(_help)
+
+  //  val ice = new ICEBrowser
+  //  ice.printURL(helpOnHelpURL)
 
   try {
     val aBook = new HelpSet( // throws HelpSetParseException
@@ -27,7 +31,12 @@ object OXO_ViewHelp {
       System.exit(1)
     }
   }
-  
-  
+
+  def showHelp {
+    val navs = OXO_ViewHelp._contextManager.getAllNavigators()
+    if (navs != null) {
+      OXO_ViewHelp._contextManager.showNavigatorWindow(navs(0))
+    }
+  }
 
 }

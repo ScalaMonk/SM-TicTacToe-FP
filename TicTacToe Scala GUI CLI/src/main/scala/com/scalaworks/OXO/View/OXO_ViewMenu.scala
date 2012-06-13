@@ -2,7 +2,6 @@ package com.scalaworks.OXO
 package View
 
 import java.awt.event.KeyEvent
-
 import scala.swing.Swing.EmptyIcon
 import scala.swing.event.Key
 import scala.swing.AbstractButton
@@ -14,14 +13,12 @@ import scala.swing.MenuBar
 import scala.swing.MenuItem
 import scala.swing.RadioMenuItem
 import scala.swing.Separator
-
 import com.scalaworks.OXO.Model.OXOplayers
 import com.scalaworks.OXO.OXO_GUI.RESOURCEPATH
 import com.scalaworks.OXO.View.OXO_View.t
-import com.scalaworks.OXO.OXO_GUI
-
 import javax.swing.ImageIcon
 import javax.swing.KeyStroke
+import scala.swing.FileChooser
 
 /////////////////////////////////////////////////////////////////////////////
 // Menu building
@@ -107,6 +104,14 @@ object OXO_ViewMenu {
       comp
     }
 
+  private val mnuSaveItem = {
+    menuItemFactory("mnuSaveItem.text", { OXO_FileStorage.saveFile }, Some(KeyStroke.getKeyStroke(KeyEvent.VK_S, OXO_GUI.shortcutKeyMask)), EmptyIcon)
+  }
+
+  private val mnuSaveAsItem = {
+    menuItemFactory("mnuSaveAsItem.text", {}, None, EmptyIcon)
+  }
+
   private val mnuStartXItem = {
     menuFactory("startXMenuItem.text", OXOplayers.X.buttonIcon)
   }
@@ -117,7 +122,7 @@ object OXO_ViewMenu {
 
   private val mnuPrintItem = {
     menuItemFactory("printMenuItem.text",
-      { println(OXO_View.game) },
+      { OXO_ViewPrint.printAll(OXO_View.game) },
       Some(KeyStroke.getKeyStroke(KeyEvent.VK_P, OXO_GUI.shortcutKeyMask)))
   }
 
@@ -169,7 +174,7 @@ object OXO_ViewMenu {
     { OXO_View.rivalOn = true; OXO_View.audioable('/' + RESOURCEPATH + "audio/computer.au") })
 
   def updateGUI: Int = {
-    val moveCounter = OXO_View.game.moveCounter
+    val moveCounter = OXO_View.game.movecounter
     val ind = OXO_View.game.getUpdatedFieldAt(moveCounter)
     if (ind._1 >= 0) OXO_View.buttonsSeq(ind._1).icon = ind._2.avatar
 
@@ -202,8 +207,29 @@ object OXO_ViewMenu {
 
   def menuBar = new MenuBar {
     // File menu
+
     contents += new Menu("") {
       mutateTextNmeIcon(this, "fileMenu.text")
+
+      contents.append(mnuSaveItem, mnuSaveAsItem, new Separator, OXO_ViewMenu.menuItemFactory(
+        "pageSetupMenuItem.text",
+        {}, None), mnuPrintPreview, mnuPrintItem,
+        new Separator, OXO_ViewMenu.mnuResetGameItem,
+        OXO_ViewMenu.menuItemFactory(
+          "exitMenuItem.text",
+          { sys.exit }, None,
+          new ImageIcon(getClass.getResource(('/' + RESOURCEPATH + "images/px-16gnome_application_exit.png")))))
+    }
+
+    // Edit menu
+    contents += new Menu("") {
+      mutateTextNmeIcon(this, "editMenu.text")
+      contents.append(OXO_ViewMenu.mnuUndoItem, OXO_ViewMenu.mnuRedoItem, OXO_ViewMenu.mnuClearBoardItem)
+    }
+
+    // Game menu
+    contents += new Menu("") {
+      mutateTextNmeIcon(this, "gameMenu.text")
 
       mnuStartXItem.contents.append(
         menuItemFactory(
@@ -242,25 +268,12 @@ object OXO_ViewMenu {
           mnuComputerPlay,
           radioMenuItemFactory("2PlayersMenuItem.text", { OXO_View.rivalOn = false }, None, true))).buttons
 
-      contents.append(new Separator, mnuPrintPreview, mnuPrintItem,
-        OXO_ViewMenu.menuItemFactory(
-          "pageSetupMenuItem.text",
-          {}, None), new Separator, OXO_ViewMenu.mnuResetGameItem,
-        OXO_ViewMenu.menuItemFactory(
-          "exitMenuItem.text",
-          { sys.exit }, None,
-          new ImageIcon(getClass.getResource(('/' + RESOURCEPATH + "images/px-16gnome_application_exit.png")))))
-    }
-
-    // Edit menu
-    contents += new Menu("") {
-      mutateTextNmeIcon(this, "editMenu.text")
-      contents.append(OXO_ViewMenu.mnuUndoItem, OXO_ViewMenu.mnuRedoItem, OXO_ViewMenu.mnuClearBoardItem)
+      contents.append(new Separator, OXO_ViewMenu.mnuResetGameItem)
     }
 
     // View menu
     contents += new Menu("") {
-      mutateTextNmeIcon(this, "windowMenu.text")
+      mutateTextNmeIcon(this, "viewMenu.text")
 
       val mnuHints = new CheckMenuItem("")
       mutateTextNmeIcon(mnuHints,
@@ -280,24 +293,26 @@ object OXO_ViewMenu {
       contents += OXO_ViewMenu.mnuAudioSwitchItem
     }
 
+    // Window menu
+    contents += new Menu("") {
+      mutateTextNmeIcon(this, "windowMenu.text")
+    }
+
     // Help Menu
     contents += new Menu("") {
       mutateTextNmeIcon(this, "helpMenu.text")
 
       contents += OXO_ViewMenu.menuItemFactory(
         "showHelpBox.Action.text",
-        { {
-        val navs = OXO_ViewHelp._contextManager.getAllNavigators()
-        if (navs != null) {
-          OXO_ViewHelp._contextManager.showNavigatorWindow(navs(0))
-        }
-      } },
+        OXO_ViewHelp.showHelp,
         Some(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0)))
 
       contents.append(new Separator,
-        new MenuItem(Action(t("showAboutBox.Action.text")) { new OXOAboutBox() }) { mnemonic = Key.O })
+        new MenuItem(Action(t("showAboutBox.Action.text")) {
+          new OXOAboutBox()
+        }) { mnemonic = Key.O })
     }
     updateGUI
   } // def menuBar
-}// object OXO_ViewMenu
+} // object OXO_ViewMenu
 

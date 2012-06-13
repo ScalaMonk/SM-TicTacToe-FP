@@ -47,8 +47,7 @@ object OXOplayers extends Enumeration {
 
 protected[this] case class Cell(val player: OXOplayers.PlayersIcons = OXOplayers.FREE,
                                 val nVisited: Int = 0,
-                                val oldFieldValue: OXOplayers.PlayersIcons = OXOplayers.FREE) {
-}
+                                val oldFieldValue: OXOplayers.PlayersIcons = OXOplayers.FREE)
 
 object OXOboard {
   protected val DEF_BOARDSIDE = 3
@@ -160,7 +159,7 @@ class OXOboard(
     if ((pBoard(pLinearIndex).player != OXOplayers.FREE))
       throw new IllegalArgumentException(OXOgame.t("invalidPick.occupied.text").format(pLinearIndex + 1))
     pGame.moveMade
-    setSquareDirectWithHistory(pLinearIndex, pPlayer, pGame.moveCounter)
+    setSquareDirectWithHistory(pLinearIndex, pPlayer, pGame.movecounter)
   }
 
   def isWinner(pLinIndex: Int, pPlayer: OXOplayers.PlayersIcons): Boolean =
@@ -187,7 +186,7 @@ class OXOboard(
 
   def undoMove(game: OXOgame): Int =
     {
-      val index = pBoard.indexWhere(_.nVisited == game.moveCounter)
+      val index = pBoard.indexWhere(_.nVisited == game.movecounter)
       setSquareDirect(index, OXOplayers.FREE)
       game.decCounter
       index
@@ -196,7 +195,7 @@ class OXOboard(
   def redoMove(game: OXOgame): (Int, OXOplayers.PlayersIcons) =
     {
       game.incCounter
-      val index = pBoard.indexWhere(_.nVisited == game.moveCounter)
+      val index = pBoard.indexWhere(_.nVisited == game.movecounter)
       val oldFieldValue = pBoard(index).oldFieldValue
       setSquareDirect(index, oldFieldValue)
       (index, oldFieldValue)
@@ -204,12 +203,11 @@ class OXOboard(
 
   def replay(game: OXOgame) = {
     for (index <- linearIndexRange) setSquareDirect(index, OXOplayers.FREE)
-    println(game.maxMovecounter)
+    game.movecounter = 0
     for (n <- 1 to game.maxMovecounter) yield {
-      val index = pBoard.indexWhere(_.nVisited == n)
-      (n, index, pBoard(index).player)
+      val move = redoMove(game)      
+        (move._1, move._2 , minimax(game.whoIsInTurn, game.whoWasInTurn))     
     }
-
   }
 
   override def toString =

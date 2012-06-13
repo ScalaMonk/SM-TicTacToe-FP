@@ -42,8 +42,8 @@ class OXOgame(val pBoardside: Int = 3) {
   def getNsquares = OXOboard.nSquares
   private[this] val Last = getNsquares - 1
 
-  private[this] var movecounter = 0
-  def moveCounter = movecounter
+  var movecounter = 0
+  //def moveCounter = movecounter
 
   private[this] var maxMoveCounter = 0
   def maxMovecounter = maxMoveCounter
@@ -52,7 +52,7 @@ class OXOgame(val pBoardside: Int = 3) {
 
   def decCounter { movecounter -= 1 }
 
-  def moveMade {incCounter; maxMoveCounter = movecounter }
+  def moveMade { incCounter; maxMoveCounter = movecounter }
 
   def setEndOfGame {
     movecounter = getNsquares
@@ -61,7 +61,7 @@ class OXOgame(val pBoardside: Int = 3) {
 
   def getUpdatedFieldAt(at: Int) = { board.getUpdatedFieldAt(at: Int) }
 
-  private[this] def whoIsInTurn(implicit pTurn: Int = movecounter): OXOplayers.PlayersIcons =
+  def whoIsInTurn(implicit pTurn: Int = movecounter): OXOplayers.PlayersIcons =
     {
       if (((pTurn % 2) == 0) == userStarted) OXOplayers.X else OXOplayers.O
     }
@@ -116,15 +116,16 @@ class OXOgame(val pBoardside: Int = 3) {
 
   /** The character based console line
    */
+  @throws(classOf[EOFException])
   def play {
     var winner = OXOplayers.FREE
-
     do {
       printCon(board.toString)
       printCon(conclusionAfterTurn())
       printCon(t("its_Turn.text").format(whoIsInTurn()))
       try {
         val response = Console.readLine()
+
         if (response == null) throw new EOFException(t("eof.text"))
         if (doTurn(whoIsInTurn, response.toInt - 1)) { winner = whoWasInTurn; winner.incScore }
       } catch {

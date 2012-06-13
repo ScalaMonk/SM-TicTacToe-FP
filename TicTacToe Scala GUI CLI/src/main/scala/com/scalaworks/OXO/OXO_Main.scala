@@ -7,7 +7,7 @@ import java.util.Locale
 import scala.swing.Swing.EmptyIcon
 import scala.swing.Swing.Icon
 import scala.swing.Applet
-import scala.swing.MainFrame
+
 import scala.swing.Reactor
 import scala.swing.SimpleSwingApplication
 
@@ -168,10 +168,10 @@ object OXO_GUI extends SimpleSwingApplication {
   }
 
   def top =
-    new MainFrame {
+    new scala.swing.MainFrame {
       initLookAndFeel(t("Application.lookAndFeel"))
-
       centerOnScreen
+
       title = t("mainFrame.title")
       iconImage = Icon(resourceFromClassloader('/' + RESOURCEPATH + "images/px24-cross.gif")).getImage()
       menuBar = OXO_ViewMenu.menuBar
@@ -205,7 +205,7 @@ private object Main extends App { // Application Object
     } // catch
   }
 
-  def printCon(s: String) { Console.out.print(s) }
+  def printCon(s: String) { Console.out.println(s) }
   def printConView(s: String) {
     printCon(s)
   }

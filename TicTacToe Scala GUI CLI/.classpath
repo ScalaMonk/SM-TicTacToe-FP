@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="lib/share.jar"/>
 	<classpathentry kind="lib" path="lib/help-share.jar"/>
 	<classpathentry kind="lib" path="lib/oracle_ice.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="lib" path="C:/JVM Executables/icu4j-49_1/icu4j-49_1.jar" sourcepath="C:/JVM Executables/icu4j-49_1/icu4j-49_1-src.jar"/>
+	<classpathentry kind="output" path="target"/>
 </classpath>

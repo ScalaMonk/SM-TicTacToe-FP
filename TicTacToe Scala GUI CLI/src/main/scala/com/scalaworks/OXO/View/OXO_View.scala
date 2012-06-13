@@ -2,7 +2,6 @@ package com.scalaworks.OXO
 package View
 
 import java.awt.Color
-import javax.swing.JFrame
 
 import scala.swing.Swing.EmptyIcon
 import scala.swing.Dimension

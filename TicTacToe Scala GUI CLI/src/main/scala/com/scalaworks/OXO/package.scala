@@ -8,4 +8,7 @@ package object OXO {
 
   def using[A, B <: { def close(): Unit }](closeable: B)(f: B => A): A =
     try { f(closeable) } finally { closeable.close() }
+    
+  def temp[A, B <: { def close(): Unit }](closeable: B)(f: B => A): A =
+    try { f(closeable) } finally { closeable.close() }
 }

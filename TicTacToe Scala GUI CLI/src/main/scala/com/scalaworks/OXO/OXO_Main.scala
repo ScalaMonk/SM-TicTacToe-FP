@@ -7,7 +7,6 @@ import java.util.Locale
 import scala.swing.Swing.EmptyIcon
 import scala.swing.Swing.Icon
 import scala.swing.Applet
-
 import scala.swing.Reactor
 import scala.swing.SimpleSwingApplication
 
@@ -96,7 +95,13 @@ object OXO_GUI extends SimpleSwingApplication {
       }
     }
 
-    val lookAndFeel = lookUpAndFeel(pLaF)
+    var lookAndFeel = UIManager.getCrossPlatformLookAndFeelClassName()
+
+    for (laf <- UIManager.getInstalledLookAndFeels()) {
+      if (pLaF == laf.getName())
+        lookAndFeel =laf.getClassName()
+    }
+
     try UIManager.setLookAndFeel(lookAndFeel)
     catch {
       case ex: ClassNotFoundException => {

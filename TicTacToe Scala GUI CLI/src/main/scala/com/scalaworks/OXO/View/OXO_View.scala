@@ -99,30 +99,28 @@ object OXO_View {
     def gameOverDialog(message: String) = {
       OXOplayers.FREE.incScore
       //game.setEndOfGame
-      if (Dialog.showConfirmation(buttonsSeq(pSquare),
+      Dialog.showMessage(buttonsSeq(pSquare),
         "%s\n%s\nGame over ?".format(message, game.formattedScore),
-        "Scala Tic Tac Toe results") == Dialog.Result.Yes) clearBoard()
+        "Scala Tic Tac Toe results")
     }
 
     // doMove starts here
-    if (game.isLastTurn1) {
-      clearBoard(); audioable('/' + RESOURCEPATH + "audio/return.au")
-    }
+    if (game.isLastTurn) clearBoard(); audioable('/' + RESOURCEPATH + "audio/return.au")
     try {
       var thereIsAwinner = game.doMove(pSquare) // throwable
-      if (!thereIsAwinner && rivalOn && !game.isLastTurn1) { // Make countermove
+      if (!thereIsAwinner && rivalOn && !game.isLastTurn) { // Make countermove
         OXO_ViewMenu.updateGUI
         thereIsAwinner = game.doMove(game.compete) // throwable
       }
       OXO_ViewMenu.updateGUI
       if (hintsOn) displayHint
-      if (!thereIsAwinner && game.isLastTurn2) thereIsAwinner = game.isWinner(OXO_ViewMenu.updateGUI)
+      if (!thereIsAwinner && game.isLastTurnWithPreEmpty) thereIsAwinner = game.isWinner(OXO_ViewMenu.updateGUI)
       if (thereIsAwinner) {
         audioable('/' + RESOURCEPATH + "audio/yahoo1.au")
         game.whoWasInTurn.incScore
         gameOverDialog("Winner is " + game.whoWasInTurn)
         game.setEndOfGame
-      } else if (game.isLastTurn1) {
+      } else if (game.isLastTurn) {
         audioable('/' + RESOURCEPATH + "audio/yahoo2.au")
         gameOverDialog("No winner")
       } else audioable('/' + RESOURCEPATH + "audio/ding.au")
@@ -131,7 +129,7 @@ object OXO_View {
         audioable('/' + RESOURCEPATH + "audio/beep.au")
         System.err.println(ex.getMessage())
     }
-    if (game.isLastTurn1) OXO_ViewMenu.updateGUI
+    if (game.isLastTurn) OXO_ViewMenu.updateGUI
     game.conclusionAfterTurn
   } // doMove(pSquare: Int)
 

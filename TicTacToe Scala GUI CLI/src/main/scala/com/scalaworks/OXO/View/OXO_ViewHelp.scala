@@ -13,7 +13,7 @@ object OXO_ViewHelp {
   val helpOnHelpURL = new URL(
     "file:/C:/JVM Executables/ohj-11.1.2.0.0/demodoc/helpOnHelp/helpOnHelp.htm")
 
-  val _help = new Help(true, true)
+  val _help = new Help(false, true)
   val _contextManager = new CSHManager(_help)
 
   //  val ice = new ICEBrowser

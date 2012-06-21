@@ -97,11 +97,9 @@ class OXOgame(val pBoardside: Int = 3) {
 
   def isWinner(pLinInd: Int) = { board.isWinner(pLinInd, whoIsInTurn) }
 
-  def isLastTurn1: Boolean = {
-    movecounter == OXOboard.nSquares
-  }
+  def isLastTurn: Boolean = movecounter == OXOboard.nSquares
 
-  def isLastTurn2: Boolean = {
+  def isLastTurnWithPreEmpty: Boolean = {
     movecounter match {
       //          case SecondLast => secondLastEvaluation()
       case Last =>
@@ -132,7 +130,7 @@ class OXOgame(val pBoardside: Int = 3) {
         case ex: NumberFormatException    => System.err.printf(t("invalidInputExcep.text"), ex.getMessage())
         case ex: IllegalArgumentException => System.err.printf(t("illArgExcep.text"), ex.getMessage())
       }
-    } while (winner == OXOplayers.FREE && !isLastTurn2)
+    } while (winner == OXOplayers.FREE && !isLastTurnWithPreEmpty)
     OXOplayers.FREE.incScore
 
     printCon(board.toString)
@@ -140,7 +138,7 @@ class OXOgame(val pBoardside: Int = 3) {
   } // def play
 
   def conclusionAfterTurn() = {
-    (if (isLastTurn1) t("noMorePos") else t("advice.text").format(compete + 1)) + '\n'
+    (if (isLastTurn) t("noMorePos") else t("advice.text").format(compete + 1)) + '\n'
   }
 
   override def toString = {
@@ -153,9 +151,7 @@ class OXOgame(val pBoardside: Int = 3) {
     buf.append(board)
 
     println(board.replay(this))
-
     buf.toString
-
   }
 
   //  override def toString = t("gameExplanation.text").format(pBoardside)

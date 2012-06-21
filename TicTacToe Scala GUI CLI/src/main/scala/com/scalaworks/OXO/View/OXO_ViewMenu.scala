@@ -2,6 +2,7 @@ package com.scalaworks.OXO
 package View
 
 import java.awt.event.KeyEvent
+
 import scala.swing.Swing.EmptyIcon
 import scala.swing.event.Key
 import scala.swing.AbstractButton
@@ -13,12 +14,14 @@ import scala.swing.MenuBar
 import scala.swing.MenuItem
 import scala.swing.RadioMenuItem
 import scala.swing.Separator
+
 import com.scalaworks.OXO.Model.OXOplayers
 import com.scalaworks.OXO.OXO_GUI.RESOURCEPATH
 import com.scalaworks.OXO.View.OXO_View.t
+import com.scalaworks.OXO.OXO_GUI
+
 import javax.swing.ImageIcon
 import javax.swing.KeyStroke
-import scala.swing.FileChooser
 
 /////////////////////////////////////////////////////////////////////////////
 // Menu building

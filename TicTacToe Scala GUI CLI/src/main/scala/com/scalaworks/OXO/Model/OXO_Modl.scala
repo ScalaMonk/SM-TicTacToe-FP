@@ -133,13 +133,17 @@ class OXOboard(
       (pLinIndex, cumX1 - cumO1)
     } // def analyzeLines(pLinIndex: Int)
 
-    // compete starts here
-    (for (freeSq <- getFreeList) yield {
-      setSquareDirect(freeSq, pActualPlayer) // Set testmarker
-      val yie = analyzeLines(freeSq: Int) // Evaluate with testmarker
-      setSquareDirect(freeSq, OXOplayers.FREE) // Erase testmarker, place backup
-      yie
-    }).sortBy(_._2).reverse.head._1
+    // minimax starts here
+
+    //    }).sortBy(_._2).reverse.head._1
+
+        (for (freeSq <- getFreeList) yield {
+          setSquareDirect(freeSq, pActualPlayer) // Set testmarker
+          val yie = analyzeLines(freeSq: Int) // Evaluate with testmarker
+          setSquareDirect(freeSq, OXOplayers.FREE) // Erase testmarker, place backup
+          yie
+        }).reduceLeft((compareTo, compareWith) => if (compareTo._2 > compareWith._2) compareTo else compareWith)._1
+
   } // minimax
 
   private def setSquareDirectWithHistory(pLinearIndex: Int, pContent: OXOplayers.PlayersIcons, turn: Int) {
@@ -205,8 +209,11 @@ class OXOboard(
     for (index <- linearIndexRange) setSquareDirect(index, OXOplayers.FREE)
     game.movecounter = 0
     for (n <- 1 to game.maxMovecounter) yield {
-      val move = redoMove(game)      
-        (move._1, move._2 , minimax(game.whoIsInTurn, game.whoWasInTurn))     
+      val move = redoMove(game)
+      (move._1,
+        move._2,
+        if(game.isLastTurn) -1
+        else minimax(game.whoIsInTurn, game.whoWasInTurn))
     }
   }
 

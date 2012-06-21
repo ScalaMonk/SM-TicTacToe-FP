@@ -2,7 +2,6 @@ package com.scalaworks.OXO
 package View
 
 import java.io.File
-import java.nio.file.Files
 
 import scala.swing.Dialog.Message
 import scala.swing.Dialog.Options
@@ -19,25 +18,41 @@ import oracle.help.htmlBrowser.ICEBrowser
 object OXO_ViewPrint {
   val browser = new ICEBrowser
   def printAll(game: OXOgame) {
-    println(
-      <htlm>{ game }</htlm>)
+    val filename = "OXOinf.htm"
+
+    val temp = new java.io.File(filename)
+    val pw = new java.io.PrintWriter(temp)
+
+    pw.print(
+      <htlm>
+        { game.toString }
+      </htlm>)
+     println(
+      <htlm>
+        { game.toString }
+      </htlm>)
+
+    pw.close()
 
     val browser = new ICEBrowser
     //val url = new URL(null,"info:C:/JVM Executables/ohj-11.1.2.0.0/demodoc/helpOnHelp/helpOnHelp.htm"
     //    ,new classpath.Handler(ClassLoader.getSystemClassLoader()))
 
-    val url = OXO_GUI.resourceFromUserDirectory("OXOinf.htm")
-    try {
-      browser.printURL(url.toURI.toURL)
-    } catch {
-      case t: IllegalStateException => {}
-      case t                        => t.printStackTrace() // todo: handle error
-    }
+    val url = OXO_GUI.resourceFromUserDirectory(filename)
+//    try {
+//      browser.printURL(url.toURI.toURL)
+//    } catch {
+//      case t: IllegalStateException => {}
+//      case t                        => t.printStackTrace() // todo: handle error
+//    }
+//    if (!temp.delete()) {
+//      // wasn't deleted for some reason, delete on exit instead
+//      temp.deleteOnExit()
+//    }
   }
 
   def printAllPreview(game: OXOgame) {
     println(game)
-
   }
 
 }
@@ -74,7 +89,7 @@ object OXO_FileStorage {
     def getDescription = "Tic Tac Toe Report (*.html)"
   }
 
-  def saveFile()  {
+  def saveFile() {
 
     val chooser = new FileChooserEx() {
       setSelectedFile(new File("OXO Game Report" + "." + "html"))

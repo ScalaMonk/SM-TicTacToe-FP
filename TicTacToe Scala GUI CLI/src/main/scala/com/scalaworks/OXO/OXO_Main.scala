@@ -64,7 +64,7 @@ object OXO_GUI extends SimpleSwingApplication {
     // Valid values are: "DefaultMetal", "Ocean",  and "Test"
     // val THEME = "DefaultMetal"
 
-    def lookUpAndFeel(plaf: String): String = plaf.toUpperCase match {
+    /*def lookUpAndFeel(plaf: String): String = plaf.toUpperCase match {
       case "ALLOY" => "com.incors.plaf.alloy.AlloyLookAndFeel"
       case "CROSS" => UIManager.getCrossPlatformLookAndFeelClassName()
       case "GTK"   => "com.sun.java.swing.plaf.gtk.GTKLookAndFeel"
@@ -93,7 +93,7 @@ object OXO_GUI extends SimpleSwingApplication {
         System.err.printf("No specific Application.lookAndFeel setting in properties file: %s\n", plaf)
         UIManager.getCrossPlatformLookAndFeelClassName()
       }
-    }
+    } */
 
     var lookAndFeel = UIManager.getCrossPlatformLookAndFeelClassName()
 
@@ -180,7 +180,7 @@ object OXO_GUI extends SimpleSwingApplication {
       title = t("mainFrame.title")
       iconImage = Icon(resourceFromClassloader('/' + RESOURCEPATH + "images/px24-cross.gif")).getImage()
       menuBar = OXO_ViewMenu.menuBar
-      contents = OXO_View.UI(None)
+      contents = OXO_View.UI(Some(OXO_View.toolBar))
     }
 } // object OXO_GUI extends SimpleSwingApplication
 

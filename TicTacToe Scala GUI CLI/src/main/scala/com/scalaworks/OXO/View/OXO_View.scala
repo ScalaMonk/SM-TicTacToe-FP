@@ -6,13 +6,13 @@ import java.awt.Color
 import scala.swing.Swing.EmptyIcon
 import scala.swing.Dimension
 import scala.swing.Alignment
-import scala.swing.BoxPanel
+import scala.swing.BorderPanel
 import scala.swing.Button
 import scala.swing.Component
 import scala.swing.Dialog
+import scala.swing.FlowPanel
 import scala.swing.GridPanel
 import scala.swing.Label
-import scala.swing.Orientation
 import scala.swing.ProgressBar
 import scala.swing.Swing
 import scala.swing.event
@@ -25,6 +25,7 @@ import com.scalaworks.OXO.OXO_GUI
 
 import javax.swing.JToolBar
 import sun.applet.AppletAudioClip
+//import java.awt.BorderLayout
 
 /** @author FransAdm
  *
@@ -53,6 +54,7 @@ object OXO_View {
 
   var rivalOn = false
   var hintsOn = false
+
   private var audioOn = true
 
   private val resourceMap = java.util.ResourceBundle.getBundle(getClass.getPackage.getName + "/resources/OXO_View", OXO_GUI.locale)
@@ -71,6 +73,7 @@ object OXO_View {
   object lblStatusField extends Label {
     text = t("statusMessageLabel.text")
     horizontalAlignment = Alignment.Left
+    this.preferredSize = new Dimension(180, 16)
   }
 
   private object lblSoundStatus extends Label {
@@ -136,11 +139,41 @@ object OXO_View {
   val buttonsSeq = OXOboard.linearIndexRange map (
     n => new Button {
       //contentAreaFilled = true
-      background = palet(n % 13)
+      background = palet(n % palet.length)
       preferredSize = dim
       listenTo(mouse.clicks)
       reactions += { case me: event.MouseClicked => doMove(n) }
     })
+
+  class ToolBar(title: String) extends Component /*with SequentialContainer.Wrapper*/ {
+
+    override lazy val peer: JToolBar = new JToolBar(title)
+    //      def add(action: Action) { peer.add(action.peer) }
+    def add(component: Component) { peer.add(component.peer) }
+  } // class ToolBar
+
+  val toolBar: ToolBar = new ToolBar("Settings") {
+    add(new Button() {
+      //background = colors(n)
+      //border = border
+      //preferredSize = new Dimension(20, 20)
+      icon = OXOplayers.X.buttonIcon
+      listenTo(mouse.clicks)
+      reactions += {
+        case me: event.MouseClicked => ()
+      }
+    })
+    add(new Button() {
+      //background = colors(n)
+      //border = border
+      //preferredSize = new Dimension(20, 20)
+      icon = OXOplayers.O.buttonIcon
+      listenTo(mouse.clicks)
+      reactions += {
+        case me: event.MouseClicked => ()
+      }
+    })
+  }
 
   def clearBoard() {
     buttonsSeq.foreach(_.icon = EmptyIcon)
@@ -149,28 +182,7 @@ object OXO_View {
     lblStatusField.text = t("lblGridCleared.text")
   }
 
-  def UI(opt: Option[Component] = None) = new BoxPanel(Orientation.Vertical) {
-
-    class ToolBar(title: String) extends Component /*with SequentialContainer.Wrapper*/ {
-
-      override lazy val peer: JToolBar = new JToolBar(title)
-      //      def add(action: Action) { peer.add(action.peer) }
-      def add(component: Component) { peer.add(component.peer) }
-    } // class ToolBar
-
-    private def toolBar(): ToolBar = new ToolBar("Settings") {
-
-      add(new Button() {
-        //background = colors(n)
-        //border = border
-        preferredSize = new Dimension(20, 20)
-        icon = OXOplayers.X.avatar
-        listenTo(mouse.clicks)
-        reactions += {
-          case me: event.MouseClicked => ()
-        }
-      })
-    }
+  def UI(toolbar: Option[Component] = None) = new BorderPanel() {
 
     private def mainPanel: GridPanel = {
       new GridPanel(OXOboard.boardSide, OXOboard.boardSide) {
@@ -178,8 +190,8 @@ object OXO_View {
       }
     } // def mainPanel 
 
-    private val statusBar = new GridPanel(1, 2) {
-      contents.append(lblStatusField, progressBar)
+    private val statusBar = new FlowPanel(FlowPanel.Alignment.Leading)(progressBar, lblStatusField) {
+      preferredSize = new Dimension(16, 48)
     }
 
     private val soundStatusBar = new GridPanel(1, 1) {
@@ -187,8 +199,12 @@ object OXO_View {
     }
 
     // Start of UI view
-    if (!opt.isEmpty) contents += opt.get
-    contents.append(mainPanel, statusBar, soundStatusBar)
+    if (!toolbar.isEmpty) add(toolbar.get, BorderPanel.Position.North)
+    layout(mainPanel) = BorderPanel.Position.Center
+    layout(statusBar) = BorderPanel.Position.South
+    
+   
+    // , soundStatusBar)
   } // private def UI()
 
 } // object OXO_View

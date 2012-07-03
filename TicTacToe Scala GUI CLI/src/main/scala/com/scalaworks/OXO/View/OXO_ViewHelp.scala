@@ -5,19 +5,17 @@ import java.net.URL
 import oracle.help.CSHManager
 import oracle.help.Help
 import oracle.help.library.helpset.HelpSet
-import oracle.help.htmlBrowser.ICEBrowser
 
 // Find the HelpSet file and create the HelpSet object:
 
 object OXO_ViewHelp {
+  def showHelp {
+    
   val helpOnHelpURL = new URL(
     "file:/C:/JVM Executables/ohj-11.1.2.0.0/demodoc/helpOnHelp/helpOnHelp.htm")
 
   val _help = new Help(false, true)
   val _contextManager = new CSHManager(_help)
-
-  //  val ice = new ICEBrowser
-  //  ice.printURL(helpOnHelpURL)
 
   try {
     val aBook = new HelpSet( // throws HelpSetParseException
@@ -31,11 +29,10 @@ object OXO_ViewHelp {
       System.exit(1)
     }
   }
-
-  def showHelp {
-    val navs = OXO_ViewHelp._contextManager.getAllNavigators()
+    
+    val navs = _contextManager.getAllNavigators()
     if (navs != null) {
-      OXO_ViewHelp._contextManager.showNavigatorWindow(navs(0))
+      _contextManager.showNavigatorWindow(navs(0))
     }
   }
 

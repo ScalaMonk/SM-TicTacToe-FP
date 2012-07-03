@@ -30,7 +30,7 @@ import javax.swing.KeyStroke
 object OXO_ViewMenu {
   private val AMPERSAND = '&'
 
-  private def mutateTextNmeIcon(
+  def mutateTextNmeIcon(
     pComp: AbstractButton,
     pActionTitleResourceText: String,
     pActionBlock: => Unit = {},
@@ -53,9 +53,7 @@ object OXO_ViewMenu {
       // The ampersand parser
       pComp.action = Action(t(pActionTitleResourceText).filter(sifter)) { pActionBlock }
       // Mutate component
-      if (!mne.isEmpty) {
-        pComp.mnemonic = Key.withName((mne.get).toUpper.toString)
-      }
+      if (!mne.isEmpty) pComp.mnemonic = Key.withName((mne.get).toUpper.toString)
       pComp.icon = pIcon
       pComp.action.accelerator = pAccelerator
     }
@@ -131,7 +129,7 @@ object OXO_ViewMenu {
 
   private val mnuPrintPreview = {
     menuItemFactory("printPreviewMenuItem.text",
-      { println(OXO_View.game) })
+      { OXO_ViewPrint.printAllPreview(OXO_View.game) })
   }
 
   private val mnuClearBoardItem =
@@ -194,8 +192,8 @@ object OXO_ViewMenu {
 
     mnuComputerPlay.selected = OXO_View.rivalOn
 
-    mnuPrintItem.enabled = moveCounter == OXO_View.game.getNsquares
-    mnuPrintPreview.enabled = moveCounter == OXO_View.game.getNsquares
+    mnuPrintItem.enabled = endOfGame
+    mnuPrintPreview.enabled = endOfGame
 
     val updatedProgBar =
       if (endOfGame)
@@ -209,10 +207,11 @@ object OXO_ViewMenu {
   } // updateGUI
 
   def menuBar = new MenuBar {
+    tooltip = "Menubar tooltip text"
     // File menu
-
     contents += new Menu("") {
       mutateTextNmeIcon(this, "fileMenu.text")
+      tooltip = "Tooltip text"
 
       contents.append(mnuSaveItem, mnuSaveAsItem, new Separator, OXO_ViewMenu.menuItemFactory(
         "pageSetupMenuItem.text",
@@ -299,6 +298,14 @@ object OXO_ViewMenu {
     // Window menu
     contents += new Menu("") {
       mutateTextNmeIcon(this, "windowMenu.text")
+      
+      val mnuShowToolBar = new CheckMenuItem("")
+      mutateTextNmeIcon(mnuShowToolBar,
+        "showToolBar.Action.text",
+        { OXO_View.toolBar.visible = mnuShowToolBar.selected },
+        Some(KeyStroke.getKeyStroke(KeyEvent.VK_T, OXO_GUI.shortcutKeyMask)))
+      contents += mnuShowToolBar
+      mnuShowToolBar.selected = true
     }
 
     // Help Menu
@@ -310,10 +317,10 @@ object OXO_ViewMenu {
         OXO_ViewHelp.showHelp,
         Some(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0)))
 
-      contents.append(new Separator,
-        new MenuItem(Action(t("showAboutBox.Action.text")) {
-          new OXOAboutBox()
-        }) { mnemonic = Key.O })
+      contents += OXO_ViewMenu.menuItemFactory(
+        "showAboutBox.Action.text",
+        new OXOAboutBox,
+        None)
     }
     updateGUI
   } // def menuBar

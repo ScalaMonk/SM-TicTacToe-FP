@@ -35,28 +35,26 @@ object OXO_ViewMenu {
     pActionTitleResourceText: String,
     pActionBlock: => Unit = {},
     pAccelerator: Option[javax.swing.KeyStroke] = None,
-    pIcon: javax.swing.Icon = EmptyIcon) =
-    {
-      var ampFlag = false
-      var mne: Option[Char] = None
+    pIcon: javax.swing.Icon = EmptyIcon) {
 
-      // The ampersand filter evaluator
-      def sifter(c: Char): Boolean = {
-        val ret = (c != AMPERSAND) || ampFlag
+    // The mnemonic parser
+    var ampFlag = false
+    var mne: Option[Char] = None
+    pComp.action = Action(t(pActionTitleResourceText).filter(
+      (c: Char) => { // The ampersand filter evaluator
+        val isStringText = (c != AMPERSAND) || ampFlag // The last term is for && (escape)
         if (ampFlag) {
           if (c != AMPERSAND) mne = Some(c)
-          ampFlag = false
+          ampFlag = false // destructive assignment
         } else ampFlag = (c == AMPERSAND)
-        ret
-      }
-
-      // The ampersand parser
-      pComp.action = Action(t(pActionTitleResourceText).filter(sifter)) { pActionBlock }
-      // Mutate component
-      if (!mne.isEmpty) pComp.mnemonic = Key.withName((mne.get).toUpper.toString)
-      pComp.icon = pIcon
-      pComp.action.accelerator = pAccelerator
-    }
+        isStringText
+      } //menuMne.sifter(_))
+      )) { pActionBlock }
+    // Mutate component
+    if (!mne.isEmpty) pComp.mnemonic = Key.withName((mne.get).toUpper.toString)
+    pComp.icon = pIcon
+    pComp.action.accelerator = pAccelerator
+  }
 
   private def menuItemFactory(
     pActionTitleResourceText: String,
@@ -298,7 +296,7 @@ object OXO_ViewMenu {
     // Window menu
     contents += new Menu("") {
       mutateTextNmeIcon(this, "windowMenu.text")
-      
+
       val mnuShowToolBar = new CheckMenuItem("")
       mutateTextNmeIcon(mnuShowToolBar,
         "showToolBar.Action.text",
